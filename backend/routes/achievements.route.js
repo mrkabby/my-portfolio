@@ -77,4 +77,10 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// Endpoint for deleting all projects
+router.delete('/', async(req, res) => {
+    let result = await ACHIEVEMENTS_COLLECTION.deleteMany({});
+    res.send(result).status(200); 
+});
+
 export default router;

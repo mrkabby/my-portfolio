@@ -35,9 +35,14 @@ router.get('/:id', async (req, res) => {
 // Endpoint for adding a single project
 router.post("/", async (req, res) => {
     try {
-        let newProject = req.body;
+        let newProject = {
+            title:req.body.title,
+            description: req.body.description,
+            image: req.body.image,
+            live_demo: req.body.live_demo
+        }
         let result = await PROJECTS_COLLECTION.insertOne(newProject);
-        res.status(201).json(result.ops[0]);
+        res.send(result).status(201)
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -48,7 +53,13 @@ router.post("/", async (req, res) => {
 router.patch('/:id', async (req, res) => {
     try {
         const query = { _id: new ObjectId(req.params.id) };
-        const updates = { $set: req.body };
+        const updates = { $set: {
+            title:req.body.title,
+            description: req.body.description,
+            image: req.body.image,
+            live_demo: req.body.live_demo
+        }};
+
         let result = await PROJECTS_COLLECTION.updateOne(query, updates);
         if (result.modifiedCount === 0) {
             res.status(404).json({ message: "Project Not Found" });
@@ -75,6 +86,12 @@ router.delete('/:id', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
+});
+
+// Endpoint for deleting all projects
+router.delete('/', async(req, res) => {
+    let result = await PROJECTS_COLLECTION.deleteMany({});
+    res.send(result).status(200); 
 });
 
 export default router;
